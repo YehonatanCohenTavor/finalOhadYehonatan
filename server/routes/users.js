@@ -48,5 +48,13 @@ router.delete('/:username', adjustUserPath, ({body}, res) => {
     })
 })
 
+router.put('/:username', adjustUserPath, ({ body }, res) => [
+  fs.rename(`${res.locals.path}/${body.oldName}`, `${res.locals.path}/${body.newName}`, err => {
+    if (err) console.log(err);
+    console.log('File renamed!');
+    res.json(body);
+  })
+])
+
 module.exports = router;
 
