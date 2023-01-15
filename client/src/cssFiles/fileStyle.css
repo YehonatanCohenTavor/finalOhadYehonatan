@@ -1,0 +1,15 @@
+.file{
+    display: flex;
+    justify-content: space-around;
+}
+
+.title{
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.fileContainer{
+    text-align: center;
+}
+
+

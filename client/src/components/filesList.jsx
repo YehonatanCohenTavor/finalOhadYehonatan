@@ -1,18 +1,50 @@
-import React, { useState, useEffect } from 'react';
-
+import React, { useState, useEffect } from "react";
+import Li from "./Li";
+import "../cssFiles/fileStyle.css";
 
 function FilesList() {
-    const [fileArray, setFileArray] = useState([]);
+  const [fileArray, setFileArray] = useState([]);
+  const [status, setStatus] = useState(false);
+  let path = `http://localhost:8080/users/admin`;
 
-    useEffect(() => {
-        fetch(`http://localhost:8080/users/admin`)
-            .then(res => res.json())
-            .then(data => console.log(data));
-    },[])
+  useEffect(() => {
+    fetch(path)
+      .then((res) => res.json())
+      .then((data) => setFileArray(data));
+  }, [status]);
 
-    return (
-        <></>
-    );
+  function makeNewFile() {
+    let fileName = prompt("New Files Name:");
+    let isFile = prompt("File/Folder");
+    let reqPostObj = { name: fileName, type: isFile, data: "" };
+    fetch(path, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(reqPostObj),
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .then(() => setStatus(!status))
+      .catch((error) => console.error(error));
+  }
+
+  return (
+    <div className="fileContainer">
+      <h1>Here are your files ma lord</h1>
+      <button onClick={makeNewFile} id="addBtn">
+        Add New File
+      </button>
+      <div className="file title">
+        <p>Name:</p>
+        <p>Type:</p>
+        <p>Date Of Creation:</p>
+        <p>Size:</p>
+      </div>
+      {fileArray.map((file, index) => {
+        return <Li key={index} file={file} index={index} />;
+      })}
+    </div>
+  );
 }
 
 export default FilesList;
