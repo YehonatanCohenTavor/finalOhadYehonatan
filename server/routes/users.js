@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const fs = require('fs');
-const adjustUserPath = require('../middlewares');
+const {adjustUserPath} = require('../middlewares');
 
 // /* GET users listing. */
 router.get('/:username',adjustUserPath, function (req, res, next) {
@@ -21,6 +21,13 @@ router.get('/:username',adjustUserPath, function (req, res, next) {
     })
   });
 });
+
+router.get('/:username/:file', adjustUserPath, (req, res) => {
+  fs.readFile(`${res.locals.path}/${req.params.username}/${req.params.file}`, 'utf8', (err, data) => {
+    console.log(data);
+    res.send(data);
+  })
+})
 
 
 router.post(`/:username`,adjustUserPath, ({ body }, res) => {
