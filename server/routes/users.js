@@ -1,9 +1,11 @@
 var express = require('express');
 var router = express.Router();
 const fs = require('fs');
-const {adjustUserPath} = require('../middlewares');
+const { adjustUserPath } = require('../middlewares');
 
-// /* GET users listing. */
+const dynamicRoutes = [];
+
+// /* GET All files. */
 router.get('/:username',adjustUserPath, function (req, res, next) {
   let userFiles = [];
   console.log(res.locals.path);
@@ -22,13 +24,14 @@ router.get('/:username',adjustUserPath, function (req, res, next) {
   });
 });
 
+//GET specific files
 router.get('/:username/:file', adjustUserPath, (req, res) => {
-  fs.readFile(`${res.locals.path}/${req.params.username}/${req.params.file}`, 'utf8', (err, data) => {
-    console.log(data);
+  fs.readFile(`${res.locals.path}/${req.params.file}`,'utf8', (err, data) => {
     res.send(data);
   })
 })
 
+//POST a new file/directory
 
 router.post(`/:username`,adjustUserPath, ({ body }, res) => {
   if (body.type === 'file') {
@@ -47,6 +50,8 @@ router.post(`/:username`,adjustUserPath, ({ body }, res) => {
   }
 })
 
+//DELETE file/directory
+
 router.delete('/:username', adjustUserPath, ({body}, res) => {
   fs.rm(`${res.locals.path}/${body.name}`, { recursive: true }, err => {
     if (err) console.log(err);
@@ -54,6 +59,8 @@ router.delete('/:username', adjustUserPath, ({body}, res) => {
     res.json(body);
     })
 })
+
+//PUT file name
 
 router.put('/:username', adjustUserPath, ({ body }, res) => [
   fs.rename(`${res.locals.path}/${body.oldName}`, `${res.locals.path}/${body.newName}`, err => {

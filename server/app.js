@@ -8,7 +8,7 @@ const bodyParser = require('body-parser');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
-const adjustUserPath = require('./middlewares');
+
 
 
 const app = express();
