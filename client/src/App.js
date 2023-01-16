@@ -7,18 +7,9 @@ export const UserContext = createContext();
 
 function App() {
   return (
-    <UserContext.Provider >
-      <Routes>
-        <Route
-          path='/'
-          element={<Login />}
-        />
-      </Routes>
-      <Route
-        path='/drive'
-      element={<FilesList />}
-      />
-    </UserContext.Provider>
+    <>
+    <FilesList/>
+    </>
   );
 }
 
