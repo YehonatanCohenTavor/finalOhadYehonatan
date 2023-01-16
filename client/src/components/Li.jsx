@@ -34,7 +34,7 @@ function Li(props) {
           autoFocus
         ></input>
       ) : (
-        <p onClick={makeEdit}>{name}</p>
+        <p className="fileName" onClick={makeEdit}>{name}</p>
       )}
       <p>{file.type}</p>
       <p>{file.birth}</p>

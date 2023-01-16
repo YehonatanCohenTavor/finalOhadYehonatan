@@ -1,6 +1,17 @@
 .file{
     display: flex;
     justify-content: space-around;
+    background-color: white;
+    transition: 0.5s;
+    cursor: default;
+}
+
+.file:hover{
+    background-color: rgba(173, 216, 230, 0.3);
+}
+
+.fileName{
+    cursor: pointer;
 }
 
 .title{

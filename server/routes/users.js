@@ -4,14 +4,16 @@ const fs = require("fs");
 const { adjustUserPath } = require("../middlewares");
 
 // /* GET All files. */
-router.get('/:username', adjustUserPath, function (req, res) {
+router.get('/:username/:folder?', adjustUserPath, function (req, res) {
   let userFiles = [];
   console.log(res.locals.path);
-  fs.readdir(res.locals.path, (err, filesNames) => {
+  console.log(`${res.locals.path}/${req.params.folder}`)
+  let url = res.locals.path + `/${req.params.folder || ''}`
+  fs.readdir(url, (err, filesNames) => {
     filesNames.forEach((file, index) => {
-      fs.stat(res.locals.path + `/${file}`, (err, stat) => {
+      console.log(file)
+      fs.stat(url + `/${file}`, (err, stat) => {
         userFiles.push({
-          id: Math.random(),
           id: Math.random(),
           name: file,
           type: stat.isFile() ? "file" : "folder",
