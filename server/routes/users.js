@@ -31,7 +31,7 @@ router.get("/:username/:folder?/:file", adjustUserPath, (req, res) => {
     "utf8",
     (err, data) => {
       if (err) console.log(err);
-      res.send(data);
+      res.send(JSON.stringify({data : data}));
     }
   );
 });
@@ -39,7 +39,6 @@ router.get("/:username/:folder?/:file", adjustUserPath, (req, res) => {
 //POST a new file/directory
 
 router.post(`/:username/:folder?`, adjustUserPath, (req, res) => {
-  console.log('IN COPY')
   let path = `${res.locals.path}/${req.params.folder || ""}/${req.body.name}`;
   if (req.body.intention === "copy") {
     if (req.body.type === "file") {
@@ -87,8 +86,8 @@ router.post(`/:username/:folder?`, adjustUserPath, (req, res) => {
 //DELETE file/directory
 
 router.delete("/:username/:folder?", adjustUserPath, (req, res) => {
-  console.log(req.params)
-  console.log(req.body)
+  console.log('in Delete...')
+
   fs.rm(`${res.locals.path}/${req.params.folder || ''}/${req.body.name}`, { recursive: true }, (err) => {
     if (err) console.log(err);
     console.log("Item deleted");
