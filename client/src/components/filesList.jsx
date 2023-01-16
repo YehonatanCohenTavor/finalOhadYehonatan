@@ -55,7 +55,7 @@ function FilesList() {
         <p>Size:</p>
       </div>
       {fileArray.map((file, index) => {
-        return <Li key={file.birth} delete={deleteFile} file={file} index={index} />;
+        return <Li key={file.id} delete={deleteFile} file={file} index={index} />;
       })}
     </div>
   );

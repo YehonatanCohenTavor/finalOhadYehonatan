@@ -17,13 +17,8 @@ router.get('/:username', adjustUserPath, function (req, res, next) {
           birth: stat.birthtime,
           size: stat.size
         })
-<<<<<<< HEAD
-        index === filesNames.length - 1 && res.json(userFiles);
-      })
-=======
         index === filesNames.length - 1 && res.send(userFiles);
       }) 
->>>>>>> d87c9461fd1e50f76abe54bd3003f1cda21c124d
     })
   });
 });
@@ -79,15 +74,9 @@ router.post(`/:username/:folder?`, adjustUserPath, (req, res) => {
 
 //DELETE file/directory
 
-<<<<<<< HEAD
-router.delete('/:username/:folder?', adjustUserPath, (req, res) => {
-  console.log(req.params);
-  fs.rm(`${res.locals.path}/${req.params.folder||''}/${req.body.name}`, { recursive: true }, err => {
-=======
 router.delete('/:username', adjustUserPath, ({body}, res) => {
   console.log(body)
   fs.rm(`${res.locals.path}/${body.name}`, { recursive: true }, err => {
->>>>>>> d87c9461fd1e50f76abe54bd3003f1cda21c124d
     if (err) console.log(err);
     console.log('Item deleted');
     res.json(req.body);
