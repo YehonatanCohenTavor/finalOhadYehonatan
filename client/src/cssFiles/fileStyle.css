@@ -12,4 +12,7 @@
     text-align: center;
 }
 
-
+.deleteBtn{
+    width: 80vw;
+    height: 8vh;
+}

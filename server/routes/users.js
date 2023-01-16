@@ -16,7 +16,7 @@ router.get('/:username',adjustUserPath, function (req, res, next) {
           birth: stat.birthtime,
           size: stat.size
         })
-        index === filesNames.length - 1 && res.json(userFiles);
+        index === filesNames.length - 1 && res.send(userFiles);
       }) 
     })
   });
@@ -48,6 +48,7 @@ router.post(`/:username`,adjustUserPath, ({ body }, res) => {
 })
 
 router.delete('/:username', adjustUserPath, ({body}, res) => {
+  console.log(body)
   fs.rm(`${res.locals.path}/${body.name}`, { recursive: true }, err => {
     if (err) console.log(err);
     console.log('Item deleted');
