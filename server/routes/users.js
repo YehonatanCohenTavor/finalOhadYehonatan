@@ -5,25 +5,21 @@ const { adjustUserPath } = require('../middlewares');
 
 
 // /* GET All files. */
-router.get('/:username', adjustUserPath, function (req, res, next) {
+router.get('/:username', adjustUserPath, function (req, res) {
   let userFiles = [];
   console.log(res.locals.path);
   fs.readdir(res.locals.path, (err, filesNames) => {
     filesNames.forEach((file, index) => {
       fs.stat(res.locals.path + `/${file}`, (err, stat) => {
         userFiles.push({
+          id: Math.random(),
           name: file,
           type: stat.isFile() ? "file" : "folder",
           birth: stat.birthtime,
           size: stat.size
         })
-<<<<<<< HEAD
         index === filesNames.length - 1 && res.json(userFiles);
       })
-=======
-        index === filesNames.length - 1 && res.send(userFiles);
-      }) 
->>>>>>> d87c9461fd1e50f76abe54bd3003f1cda21c124d
     })
   });
 });
@@ -47,6 +43,7 @@ router.post(`/:username/:folder?`, adjustUserPath, (req, res) => {
         console.log("file copied");
         res.json(req.body);
       })
+      return;
     } else {
       fs.mkdir(path + '-copy', err => {
         if (err) console.log(err);
@@ -59,6 +56,7 @@ router.post(`/:username/:folder?`, adjustUserPath, (req, res) => {
           })
         })
       })
+      return;
     }
   }
   if (req.body.type === 'file') {
@@ -79,37 +77,37 @@ router.post(`/:username/:folder?`, adjustUserPath, (req, res) => {
 
 //DELETE file/directory
 
-<<<<<<< HEAD
 router.delete('/:username/:folder?', adjustUserPath, (req, res) => {
   console.log(req.params);
-  fs.rm(`${res.locals.path}/${req.params.folder||''}/${req.body.name}`, { recursive: true }, err => {
-=======
-router.delete('/:username', adjustUserPath, ({body}, res) => {
-  console.log(body)
-  fs.rm(`${res.locals.path}/${body.name}`, { recursive: true }, err => {
->>>>>>> d87c9461fd1e50f76abe54bd3003f1cda21c124d
+  fs.rm(`${res.locals.path}/${req.params.folder || ''}/${req.body.name}`, { recursive: true }, err => {
     if (err) console.log(err);
     console.log('Item deleted');
     res.json(req.body);
   })
 })
 
-//PUT rename file 
+//PUT rename file or move file
 
 router.put('/:username/:folder?', adjustUserPath, (req, res) => {
-  fs.rename(`${res.locals.path}/${req.params.folder||''}/${req.body.oldName}`, `${res.locals.path}/${req.params.folder||''}/${req.body.newName}`, err => {
-    if (err) console.log(err);
-    console.log('File renamed!');
-    res.json(req.body);
-  })
+  if (req.body.intention === 'rename' || !req.body.intention) {
+    fs.rename(`${res.locals.path}/${req.params.folder || ''}/${req.body.oldName}`,
+      `${res.locals.path}/${req.params.folder || ''}/${req.body.newName}`,
+      err => {
+        if (err) console.log(err);
+        console.log('File renamed!');
+        res.json(req.body);
+      })
+  }
+  if (req.body.intention === 'move') {
+    fs.rename(`${res.locals.path}/${req.params.folder || ''}/${req.body.name}`,
+    `${res.locals.path}/${req.body.destination}/${req.body.name}`,
+    err => {
+      if (err) console.log(err);
+      console.log("File moved");
+      res.json(req.body);
+    })
+  }
 })
-
-//PUT move file
-
-// router.put('/:username/:folder?/:file', adjustUserPath, (req, res) => {
-//   fs.rename(`${res.locals.path}/${req.params.folder||''}/${req.params.file}`,)
-// })
-
 
 
 module.exports = router;
