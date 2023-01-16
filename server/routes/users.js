@@ -4,7 +4,7 @@ const fs = require("fs");
 const { adjustUserPath } = require("../middlewares");
 
 // /* GET All files. */
-router.get("/:username", adjustUserPath, function (req, res, next) {
+router.get('/:username', adjustUserPath, function (req, res) {
   let userFiles = [];
   console.log(res.locals.path);
   fs.readdir(res.locals.path, (err, filesNames) => {
@@ -12,15 +12,15 @@ router.get("/:username", adjustUserPath, function (req, res, next) {
       fs.stat(res.locals.path + `/${file}`, (err, stat) => {
         userFiles.push({
           id: Math.random(),
+          id: Math.random(),
           name: file,
           type: stat.isFile() ? "file" : "folder",
           birth: stat.birthtime,
-          size: stat.size,
-          wasClicked : false
-        });
-        index === filesNames.length - 1 && res.send(userFiles);
-      });
-    });
+          size: stat.size
+        })
+        index === filesNames.length - 1 && res.json(userFiles);
+      })
+    })
   });
 });
 
@@ -40,30 +40,27 @@ router.get("/:username/:folder?/:file", adjustUserPath, (req, res) => {
 
 router.post(`/:username/:folder?`, adjustUserPath, (req, res) => {
   let path = `${res.locals.path}/${req.params.folder || ""}/${req.body.name}`;
+  console.log(req.body);
   if (req.body.intention === "copy") {
     if (req.body.type === "file") {
       fs.copyFile(path, path + "-copy", (err) => {
         if (err) console.log(err);
         console.log("file copied");
         res.json(req.body);
-      });
+      })
       return;
     } else {
       fs.mkdir(path + "-copy", (err) => {
         if (err) console.log(err);
         fs.readdir(path, (err, fileNames) => {
           fileNames.forEach((file, index) => {
-            fs.copyFile(
-              `${path}/${file}`,
-              `${path + "-copy"}/${file}-copy`,
-              (err) => {
-                if (err) console.log(err);
-                index === fileNames.length - 1 && res.json(req.body);
-              }
-            );
-          });
-        });
-      });
+            fs.copyFile(`${path}/${file}`, `${path + '-copy'}/${file}-copy`, err => {
+              if (err) console.log(err);
+              index === fileNames.length - 1 && res.json(req.body);
+            })
+          })
+        })
+      })
       return;
     }
   }
@@ -95,24 +92,28 @@ router.delete("/:username/:folder?", adjustUserPath, (req, res) => {
   });
 });
 
-//PUT rename file
+//PUT rename file or move file
 
-router.put("/:username/:folder?", adjustUserPath, (req, res) => {
-  fs.rename(
-    `${res.locals.path}/${req.params.folder || ""}/${req.body.oldName}`,
-    `${res.locals.path}/${req.params.folder || ""}/${req.body.newName}`,
-    (err) => {
+router.put('/:username/:folder?', adjustUserPath, (req, res) => {
+  if (req.body.intention === 'rename' || !req.body.intention) {
+    fs.rename(`${res.locals.path}/${req.params.folder || ''}/${req.body.oldName}`,
+      `${res.locals.path}/${req.params.folder || ''}/${req.body.newName}`,
+      err => {
+        if (err) console.log(err);
+        console.log('File renamed!');
+        res.json(req.body);
+      })
+  }
+  if (req.body.intention === 'move') {
+    fs.rename(`${res.locals.path}/${req.params.folder || ''}/${req.body.name}`,
+    `${res.locals.path}/${req.body.destination}/${req.body.name}`,
+    err => {
       if (err) console.log(err);
-      console.log("File renamed!");
+      console.log("File moved");
       res.json(req.body);
-    }
-  );
-});
+    })
+  }
+})
 
-//PUT move file
-
-// router.put('/:username/:folder?/:file', adjustUserPath, (req, res) => {
-//   fs.rename(`${res.locals.path}/${req.params.folder||''}/${req.params.file}`,)
-// })
 
 module.exports = router;
