@@ -9,11 +9,12 @@ function FilesList() {
   const [showMenu, setShowMenu] = useState(false);
   const [menuPosition, setMenuPosition] = useState({});
   const [selectedFile, setselectedFile] = useState("");
+  const [showContent, setShowContent] = useState('');
+  const [url, setUrl] = useState('http://localhost:8080/users/admin')
 
-  let path = `http://localhost:8080/users/admin`;
 
   useEffect(() => {
-    fetch(path)
+    fetch(url)
       .then((res) => res.json())
       .then((data) => {
         console.log("data: ", data);
@@ -22,10 +23,7 @@ function FilesList() {
   }, [status]);
   
   const copyRequest = () => {
-    console.log(path + `/${selectedFile.name}`);
-    console.log(' name: selectedFile.name: ', selectedFile.name);
-    console.log(' type: selectedFile.type: ',  selectedFile.type);
-    fetch(path + `/${selectedFile.name}`, {
+    fetch(url , {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ type: selectedFile.type, intention: 'copy', name: selectedFile.name }),
@@ -52,13 +50,21 @@ function FilesList() {
 
   const handleClick = (e) => {
     setShowMenu(false);
+    setShowContent(false)
   };
 
-  function deleteFile(name) {
-    fetch(path, {
+  const showFile = () => {
+    console.log(url + `/${selectedFile.name}`)
+    fetch(url + `/${selectedFile.name}`)
+      .then((response) => response.json())
+      .then(data => setShowContent(data.data))
+  }
+
+  function deleteFile(file) {
+    fetch(url, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name }),
+      body: JSON.stringify({ name: file.name }),
     })
       .then((response) => response.json())
       .then(() => setStatus(!status))
@@ -69,7 +75,7 @@ function FilesList() {
     let fileName = prompt("New Files Name:");
     let isFile = prompt("File/Folder");
     let reqPostObj = { name: fileName, type: isFile, data: "" };
-    fetch(path, {
+    fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(reqPostObj),
@@ -86,6 +92,9 @@ function FilesList() {
       onClick={handleClick}
       className="fileContainer"
     >
+
+    <h5>{url}</h5>
+    
       <h1>Here are your files ma lord</h1>
       {showMenu && (
         <div
@@ -100,7 +109,7 @@ function FilesList() {
             <li onClick={() => deleteFile(selectedFile)}>Delete</li>
             <li onClick={copyRequest}>Copy</li>
             <li onClick={makeNewFile}>Add File</li>
-            <li>Rename</li>
+            <li onClick={showFile}>Show File</li>
           </ul>
         </div>
       )}
@@ -111,10 +120,11 @@ function FilesList() {
         <p>Size:</p>
       </div>
       {fileArray.map((file, index) => {
-        return (
+      return (
           <Li key={file.id} delete={deleteFile} whoEdits={selectedFile || []} file={file} index={index} />
         );
       })}
+      {showContent && <h3>{selectedFile.name}'s Content: {showContent}</h3>}
     </div>
   );
 }

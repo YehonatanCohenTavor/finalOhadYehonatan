@@ -39,6 +39,8 @@ function Li(props) {
       <p>{file.type}</p>
       <p>{file.birth}</p>
       <p>{file.size}</p>
+      {props.showContent && <h4>Content: {props.showContent}</h4>}
+
     </div>
   );
 }
