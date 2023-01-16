@@ -10,8 +10,22 @@ function FilesList() {
   useEffect(() => {
     fetch(path)
       .then((res) => res.json())
-      .then((data) => setFileArray(data));
+      .then((data) => {
+        console.log("data: ", data);
+        setFileArray(data);
+      });
   }, [status]);
+
+  function deleteFile(name) {
+    fetch(path, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name }),
+    })
+      .then((response) => response.json())
+      .then((data) => setStatus(!status))
+      .catch((error) => console.error(error));
+  }
 
   function makeNewFile() {
     let fileName = prompt("New Files Name:");
@@ -26,7 +40,6 @@ function FilesList() {
       .then((data) => console.log(data))
       .then((data) => setStatus(!status))
       .catch((error) => console.error(error));
-    
   }
 
   return (
@@ -42,7 +55,7 @@ function FilesList() {
         <p>Size:</p>
       </div>
       {fileArray.map((file, index) => {
-        return <Li key={index} file={file} index={index} />;
+        return <Li key={file.birth} delete={deleteFile} file={file} index={index} />;
       })}
     </div>
   );
