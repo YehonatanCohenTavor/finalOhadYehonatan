@@ -24,8 +24,9 @@ function FilesList() {
     })
       .then((response) => response.json())
       .then((data) => console.log(data))
-      .then(() => setStatus(!status))
+      .then((data) => setStatus(!status))
       .catch((error) => console.error(error));
+    
   }
 
   return (
